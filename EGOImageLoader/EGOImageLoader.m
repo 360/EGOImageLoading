@@ -25,8 +25,10 @@
 //
 
 #import "EGOImageLoader.h"
-#import "EGOImageLoadConnection.h"
+
 #import "EGOCache.h"
+#import "EGOImageLoadConnection.h"
+#import "NetworkIndicatorManager.h"
 
 static EGOImageLoader* __imageLoader;
 
@@ -66,7 +68,9 @@ inline static NSString* keyForURL(NSURL* url) {
 }
 
 - (void)cleanUpConnection:(EGOImageLoadConnection*)connection {
-	if(!connection.imageURL) return;
+	[[NetworkIndicatorManager sharedNetworkIndicatorManager] decreaseNetworkCounter];
+	
+	if (!connection.imageURL) return;
 	
 	connection.delegate = nil;
 	
@@ -105,11 +109,17 @@ inline static NSString* keyForURL(NSURL* url) {
 	EGOImageLoadConnection* connection = [[EGOImageLoadConnection alloc] initWithImageURL:aURL delegate:self];
 
 	[connectionsLock lock];
+	
 	[currentConnections setObject:connection forKey:aURL];
+	
 	self.currentConnections = [[currentConnections copy] autorelease];
+	
 	[connectionsLock unlock];
+	
 	[connection performSelector:@selector(start) withObject:nil afterDelay:0.01];
 	[connection release];
+	
+	[[NetworkIndicatorManager sharedNetworkIndicatorManager] increaseNetworkCounter];
 }
 
 - (UIImage*)imageForURL:(NSURL*)aURL shouldLoadWithObserver:(id<EGOImageLoaderObserver>)observer {
