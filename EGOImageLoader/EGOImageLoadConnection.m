@@ -37,7 +37,7 @@
 		_responseData = [[NSMutableData alloc] init];
 		self.timeoutInterval = 30;
 	}
-	
+
 	return self;
 }
 
@@ -45,13 +45,13 @@
 	NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:self.imageURL
 																cachePolicy:NSURLRequestReturnCacheDataElseLoad
 															timeoutInterval:self.timeoutInterval];
-	[request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];  
+	[request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
 	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 	[request release];
 }
 
 - (void)cancel {
-	[_connection cancel];	
+	[_connection cancel];
 }
 
 - (NSData*)responseData {
@@ -90,6 +90,7 @@
 	self.delegate = nil;
 	[_connection release];
 	[_imageURL release];
+	[_responseData release], _responseData = nil;
 	[super dealloc];
 }
 
