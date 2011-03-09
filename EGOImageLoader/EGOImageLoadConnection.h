@@ -26,6 +26,16 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    EgoPreviewEncodingFormatNone,
+    EgoPreviewEncodingFormat80x80, /// This format is used to get icon 80x80.png
+    EgoPreviewEncodingFormat80x80Quadratic, // This fromat is used to get icon for 80x80!.png
+    EgoPreviewEncodingFormat500x500,    // This format is used to get photo 500x500.jpg
+    EgoPreviewEncodingFormat800x800	// This format is used to get photo in 800x800.jpeg
+
+} EgoPreviewEncodingFormat;
+
+
 @protocol EGOImageLoadConnectionDelegate;
 
 @interface EGOImageLoadConnection : NSObject {
@@ -35,8 +45,9 @@
 	NSMutableData* _responseData;
 	NSURLConnection* _connection;
 	NSTimeInterval _timeoutInterval;
-	
+
 	id<EGOImageLoadConnectionDelegate> _delegate;
+    EgoPreviewEncodingFormat applyPrieveiewEncoding;
 }
 
 - (id)initWithImageURL:(NSURL*)aURL delegate:(id)delegate;
@@ -51,10 +62,11 @@
 @property(nonatomic,assign) id<EGOImageLoadConnectionDelegate> delegate;
 
 @property(nonatomic,assign) NSTimeInterval timeoutInterval; // Default is 30 seconds
+@property(nonatomic,assign) EgoPreviewEncodingFormat applyPrieveiewEncoding;
 
 @end
 
 @protocol EGOImageLoadConnectionDelegate<NSObject>
 - (void)imageLoadConnectionDidFinishLoading:(EGOImageLoadConnection *)connection;
-- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didFailWithError:(NSError *)error;	
+- (void)imageLoadConnection:(EGOImageLoadConnection *)connection didFailWithError:(NSError *)error;
 @end

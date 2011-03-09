@@ -25,10 +25,14 @@
 //
 
 #import "EGOImageLoadConnection.h"
+#import "ApplicationController.h"
+#import "ServiceAgent.h"
+#import "VFSession.h"
 
 
 @implementation EGOImageLoadConnection
 @synthesize imageURL=_imageURL, response=_response, delegate=_delegate, timeoutInterval=_timeoutInterval;
+@synthesize applyPrieveiewEncoding;
 
 - (id)initWithImageURL:(NSURL*)aURL delegate:(id)delegate {
 	if((self = [super init])) {
@@ -45,7 +49,25 @@
 	NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:self.imageURL
 																cachePolicy:NSURLRequestReturnCacheDataElseLoad
 															timeoutInterval:self.timeoutInterval];
+    NSString *tokenString = AppController.serviceAgent.session.location;
+    [request setValue:tokenString forHTTPHeaderField:@"Authorization"];
 	[request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
+    switch(applyPrieveiewEncoding) {
+        case EgoPreviewEncodingFormat80x80:
+            [request setValue:@"image/jpeg; pxmax=80;pymax=80;sq=(0	);r=(0);" forHTTPHeaderField:@"Accept"];
+            break;
+        case EgoPreviewEncodingFormat80x80Quadratic:
+            [request setValue:@"image/jpeg; pxmax=80;pymax=80;sq=(1);r=(0);" forHTTPHeaderField:@"Accept"];
+            break;
+        case EgoPreviewEncodingFormat500x500:
+            [request setValue:@"image/jpeg; pxmax=500;pymax=500;sq=(0);r=(0);" forHTTPHeaderField:@"Accept"];
+            break;
+        case EgoPreviewEncodingFormat800x800:
+            [request setValue:@"image/jpeg; pxmax=800;pymax=800;sq=(0);r=(0);" forHTTPHeaderField:@"Accept"];
+            break;
+        default:
+            break;
+    }
 	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 	[request release];
 }
