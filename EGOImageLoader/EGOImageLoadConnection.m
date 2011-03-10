@@ -27,7 +27,7 @@
 #import "EGOImageLoadConnection.h"
 #import "ApplicationController.h"
 #import "ServiceAgent.h"
-#import "VFSession.h"
+#import "SugarSyncSession.h"
 
 
 @implementation EGOImageLoadConnection
@@ -49,7 +49,7 @@
 	NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:self.imageURL
 																cachePolicy:NSURLRequestReturnCacheDataElseLoad
 															timeoutInterval:self.timeoutInterval];
-    NSString *tokenString = AppController.serviceAgent.session.location;
+    NSString *tokenString = AppController.serviceAgent.session.authorizationToken;
     [request setValue:tokenString forHTTPHeaderField:@"Authorization"];
 	[request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
     switch(applyPrieveiewEncoding) {
