@@ -41,7 +41,6 @@ inline static NSString* keyForURL(NSURL* url) {
 
 @implementation EGOImageLoader
 @synthesize currentConnections=_currentConnections;
-@synthesize applyPrieveiewEncoding;
 
 + (EGOImageLoader*)sharedImageLoader {
 	@synchronized(self) {
@@ -57,7 +56,6 @@ inline static NSString* keyForURL(NSURL* url) {
 	if((self = [super init])) {
 		connectionsLock = [[NSLock alloc] init];
 		currentConnections = [[NSMutableDictionary alloc] init];
-        applyPrieveiewEncoding = EgoPreviewEncodingFormatNone;
 	}
 
 	return self;
@@ -109,7 +107,6 @@ inline static NSString* keyForURL(NSURL* url) {
 	}
 
 	EGOImageLoadConnection* connection = [[EGOImageLoadConnection alloc] initWithImageURL:aURL delegate:self];
-    [connection setApplyPrieveiewEncoding:self.applyPrieveiewEncoding];
 
 	[connectionsLock lock];
 

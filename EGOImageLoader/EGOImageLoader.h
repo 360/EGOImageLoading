@@ -34,7 +34,6 @@
 	NSMutableDictionary* currentConnections;
 
 	NSLock* connectionsLock;
-    EgoPreviewEncodingFormat applyPrieveiewEncoding;
 }
 
 + (EGOImageLoader*)sharedImageLoader;
@@ -50,7 +49,6 @@
 - (void)removeObserver:(id<EGOImageLoaderObserver>)observer forURL:(NSURL*)aURL;
 
 @property(nonatomic,retain) NSDictionary* currentConnections;
-@property(nonatomic,assign) EgoPreviewEncodingFormat applyPrieveiewEncoding;
 @end
 
 @protocol EGOImageLoaderObserver<NSObject>
