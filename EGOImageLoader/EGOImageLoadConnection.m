@@ -38,7 +38,7 @@
 		_imageURL = [aURL retain];
 		self.delegate = delegate;
 		_responseData = [[NSMutableData alloc] init];
-		self.timeoutInterval = 30;
+		self.timeoutInterval = 60;
 	}
 
 	return self;
