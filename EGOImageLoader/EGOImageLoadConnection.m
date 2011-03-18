@@ -26,6 +26,7 @@
 
 #import "EGOImageLoadConnection.h"
 #import "ApplicationController.h"
+#import "NetworkIndicatorManager.h"
 #import "ServiceAgent.h"
 #import "SugarSyncSession.h"
 #import "SugarSyncUrl.h"
@@ -56,20 +57,26 @@
         switch(((SugarSyncURL*)self.imageURL).transcoding) {
             case EgoPreviewEncodingFormat80x80:
                 [request setValue:@"image/jpeg; pxmax=80;pymax=80;sq=(0	);r=(0);" forHTTPHeaderField:@"Accept"];
+                NSLog(@"Download res 80x80");
                 break;
             case EgoPreviewEncodingFormat80x80Quadratic:
+                NSLog(@"Download res 80x80 square");
                 [request setValue:@"image/jpeg; pxmax=80;pymax=80;sq=(1);r=(0);" forHTTPHeaderField:@"Accept"];
                 break;
             case EgoPreviewEncodingFormat500x500:
+                NSLog(@"Download res 500x500");
                 [request setValue:@"image/jpeg; pxmax=500;pymax=500;sq=(0);r=(0);" forHTTPHeaderField:@"Accept"];
                 break;
             case EgoPreviewEncodingFormat800x800:
+                NSLog(@"Download res 800x800");
                 [request setValue:@"image/jpeg; pxmax=800;pymax=800;sq=(0);r=(0);" forHTTPHeaderField:@"Accept"];
                 break;
             default:
                 break;
         }
+        NSLog(@"Loading SugarSyncUrl for image url: %@", self.imageURL);
     }
+	[[NetworkIndicatorManager sharedNetworkIndicatorManager] increaseNetworkCounter];
 	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 	[request release];
 }
@@ -89,19 +96,26 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
 	if(connection != _connection) return;
+    NSLog(@"connection didReceiveResponse: %@", response);
 	self.response = response;
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	if(connection != _connection) return;
+    NSLog(@"connectionDidFinishLoading: %@", connection);
 
 	if([self.delegate respondsToSelector:@selector(imageLoadConnectionDidFinishLoading:)]) {
+        [[NetworkIndicatorManager sharedNetworkIndicatorManager] decreaseNetworkCounter];
 		[self.delegate imageLoadConnectionDidFinishLoading:self];
 	}
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
 	if(connection != _connection) return;
+
+    NSLog(@"NSURLConnection didFailWithError: %@", error);
+
+    [[NetworkIndicatorManager sharedNetworkIndicatorManager] decreaseNetworkCounter];
 
 	if([self.delegate respondsToSelector:@selector(imageLoadConnection:didFailWithError:)]) {
 		[self.delegate imageLoadConnection:self didFailWithError:error];

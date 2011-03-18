@@ -68,7 +68,7 @@ inline static NSString* keyForURL(NSURL* url) {
 }
 
 - (void)cleanUpConnection:(EGOImageLoadConnection*)connection {
-	[[NetworkIndicatorManager sharedNetworkIndicatorManager] decreaseNetworkCounter];
+//	[[NetworkIndicatorManager sharedNetworkIndicatorManager] decreaseNetworkCounter];
 
 	if (!connection.imageURL) return;
 
@@ -103,6 +103,7 @@ inline static NSString* keyForURL(NSURL* url) {
 	}
 
 	if([self loadingConnectionForURL:aURL]) {
+        NSLog(@"Found a pre-loaded connection for %@", aURL) ;
 		return;
 	}
 
@@ -118,8 +119,6 @@ inline static NSString* keyForURL(NSURL* url) {
 
 	[connection performSelector:@selector(start) withObject:nil afterDelay:0.01];
 	[connection release];
-
-	[[NetworkIndicatorManager sharedNetworkIndicatorManager] increaseNetworkCounter];
 }
 
 - (UIImage*)imageForURL:(NSURL*)aURL shouldLoadWithObserver:(id<EGOImageLoaderObserver>)observer {
@@ -128,6 +127,7 @@ inline static NSString* keyForURL(NSURL* url) {
 	UIImage* anImage = [[EGOCache currentCache] imageForKey:keyForURL(aURL)];
 
 	if(anImage) {
+        NSLog(@"Found a cached image for %@", aURL) ;
 		return anImage;
 	} else {
 		[self loadImageForURL:(NSURL*)aURL observer:observer];
