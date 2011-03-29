@@ -56,25 +56,25 @@
     if([self.imageURL isKindOfClass:[SugarSyncURL class]]) {
         switch(((SugarSyncURL*)self.imageURL).transcoding) {
             case EgoPreviewEncodingFormat80x80:
-                [request setValue:@"image/jpeg; pxmax=80;pymax=80;sq=(0	);r=(0);" forHTTPHeaderField:@"Accept"];
-                NSLog(@"Download res 80x80");
+                [request setValue:@"image/jpeg; pxmax=80;pymax=80;sq=(0);r=(0);" forHTTPHeaderField:@"Accept"];
+                NSLog(@"Requesting an image transcode to resolution 80x80");
                 break;
             case EgoPreviewEncodingFormat80x80Quadratic:
-                NSLog(@"Download res 80x80 square");
-                [request setValue:@"image/jpeg; pxmax=80;pymax=80;sq=(1);r=(0);" forHTTPHeaderField:@"Accept"];
+                NSLog(@"Requesting an image transcode to resolution 80x80 quadratic");
+                [request setValue:@"image/jpeg; pxmax=80;pymax=80;sq=(0);r=(0);" forHTTPHeaderField:@"Accept"];
                 break;
             case EgoPreviewEncodingFormat500x500:
-                NSLog(@"Download res 500x500");
+                NSLog(@"Requesting an image transcode to resolution 500x500");
                 [request setValue:@"image/jpeg; pxmax=500;pymax=500;sq=(0);r=(0);" forHTTPHeaderField:@"Accept"];
                 break;
             case EgoPreviewEncodingFormat800x800:
-                NSLog(@"Download res 800x800");
+                NSLog(@"Requesting an image transcode to resolution 800x800");
                 [request setValue:@"image/jpeg; pxmax=800;pymax=800;sq=(0);r=(0);" forHTTPHeaderField:@"Accept"];
                 break;
             default:
                 break;
         }
-        NSLog(@"Loading SugarSyncUrl for image url: %@", self.imageURL);
+        NSLog(@"Loading SugarSyncUrl for image url: %@", [self.imageURL description]);
     }
 	[[NetworkIndicatorManager sharedNetworkIndicatorManager] increaseNetworkCounter];
 	_connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
@@ -96,13 +96,12 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
 	if(connection != _connection) return;
-    NSLog(@"connection didReceiveResponse: %@", response);
 	self.response = response;
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
 	if(connection != _connection) return;
-    NSLog(@"connectionDidFinishLoading: %@", connection);
+    NSLog(@"didReceiveResponse for image url: %@", [self.imageURL description]);
 
 	if([self.delegate respondsToSelector:@selector(imageLoadConnectionDidFinishLoading:)]) {
         [[NetworkIndicatorManager sharedNetworkIndicatorManager] decreaseNetworkCounter];
@@ -114,6 +113,7 @@
 	if(connection != _connection) return;
 
     NSLog(@"NSURLConnection didFailWithError: %@", error);
+    NSLog(@"didFailWithError for image url: %@", [self.imageURL description]);
 
     [[NetworkIndicatorManager sharedNetworkIndicatorManager] decreaseNetworkCounter];
 
